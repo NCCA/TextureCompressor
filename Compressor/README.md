@@ -29,3 +29,8 @@ int size;
 unsigned char data[size];
 ```
 
+**Note** the data is stored internally in BGR format so it will need to be read using
+
+```c++
+  fragColour.rgb=texture(tex,vertUV ).bgr;
+```

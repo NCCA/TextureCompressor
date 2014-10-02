@@ -2,7 +2,6 @@
 #include <ngl/ShaderLib.h>
 #include <ngl/NGLassert.h>
 
-static int s_pixels=4;
 
 ScreenQuad::ScreenQuad(const std::string &_shader)
 {
@@ -68,7 +67,7 @@ ScreenQuad::~ScreenQuad()
   glDeleteVertexArrays(1,&m_vao);
 }
 
-void ScreenQuad::draw()
+void ScreenQuad::draw() const
 {
 
   ngl::ShaderLib *shader = ngl::ShaderLib::instance();

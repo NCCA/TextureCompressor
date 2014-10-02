@@ -4,7 +4,6 @@ TARGET=DXTViewer
 OBJECTS_DIR=obj
 # core Qt Libs to use add more here if needed.
 QT+=gui opengl core
-
 # as I want to support 4.8 and 5 this will set a flag for some of the mac stuff
 # mainly in the types.h file for the setMacVisual which is native in Qt5
 isEqual(QT_MAJOR_VERSION, 5) {

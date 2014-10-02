@@ -2,30 +2,39 @@
 #include <ngl/Util.h>
 #include <fstream>
 #include <iostream>
+
 DXTTexture::~DXTTexture()
 {
-
+  reset();
 }
+
+void DXTTexture::reset()
+{
+  // clean up textures
+  glDeleteTextures(1,&m_texID);
+  m_width=0;
+  m_height=0;
+  m_texID=0;
+  m_dataSize=0;
+}
+
 
 DXTTexture::DXTTexture(const std::string &_name)
 {
   load(_name);
 }
 
-DXTTexture::DXTTexture(const ngl::Texture &_t)
-{
-
-}
 
 bool DXTTexture::load(const std::string &_name)
 {
   std::ifstream fileIn;
 
   fileIn.open(_name.c_str(),std::ios::in | std::ios::binary);
+
   char header[11];
   fileIn.read(header,10*sizeof(char));
   header[10]=0; // for strcmp we need \n
-  // basically I used the magick string ngl::bin (I presume unique in files!) and
+  // basically I used the magick string ngl::cmptx (I presume unique in files!) and
   // we test against it.
   if(strcmp(header,"ngl::cmptx"))
   {
@@ -34,10 +43,17 @@ bool DXTTexture::load(const std::string &_name)
     std::cout<<"this is not an ngl::cmptx file "<<std::endl;
     return false;
   }
+  // data is in the format
+  // 10 bytes ngl::cmptx
+  // sizeof(int) width
+  // sizeof(int) height
+  // sizeof(GLenum) internalformat
+  // sizeof(enum) compression enum for type
+  // sizeof(int) size of data
+  // raw compressed data unsigned char[size]
 
   fileIn.read(reinterpret_cast<char *>(&m_width),sizeof( int));
   fileIn.read(reinterpret_cast<char *>(&m_height),sizeof( int));
-  std::cout<<"W/H "<<m_width<<" "<<m_height<<"\n";
   GLenum internalFormat;
   fileIn.read(reinterpret_cast<char *>(&internalFormat),sizeof(GLenum));
   COMPRESSION format;
@@ -45,37 +61,31 @@ bool DXTTexture::load(const std::string &_name)
   std::cout<<"iFormat "<<internalFormat<<" "<<format<<"\n";
 
   fileIn.read(reinterpret_cast <char *>(&m_dataSize),sizeof(unsigned int));
-  m_data = new GLubyte[m_dataSize];
+  GLubyte *data = new GLubyte[m_dataSize];
   std::cout<<"data size "<<m_dataSize<<"\n";
-  fileIn.read(reinterpret_cast<char *>(&m_data[0]),m_dataSize);
+  fileIn.read(reinterpret_cast<char *>(&data[0]),m_dataSize);
 
 
-fileIn.close();
+  fileIn.close();
+
+  // now create texture and load to GL
+  glGenTextures(1, &m_texID);
+  glBindTexture(GL_TEXTURE_2D, m_texID);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+  // use simple format for now can always change later
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+  glCompressedTexImage2D(GL_TEXTURE_2D, 0,  internalFormat, m_width, m_height, 0,  m_dataSize,&data[0]);
 
 
-glGenTextures(1, &m_textID);
-glBindTexture(GL_TEXTURE_2D, m_textID);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-
-glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-//if(format == DXT1)
-//  glCompressedTexImage2D(GL_TEXTURE_2D, 0,  GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, m_width, m_height, 0,  m_dataSize,&m_data[0]);
-//else if(format == DXT3)
-//glCompressedTexImage2D(GL_TEXTURE_2D, 0,  GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, m_width, m_height, 0,  m_dataSize,&m_data[0]);
-//else if(format == DXT5)
-glCompressedTexImage2D(GL_TEXTURE_2D, 0,  internalFormat, m_width, m_height, 0,  m_dataSize,&m_data[0]);
-
-
-glGenerateMipmap(GL_TEXTURE_2D);
-ngl::NGLCheckGLError("DXTTexture creation",__LINE__);
-
-
+  glGenerateMipmap(GL_TEXTURE_2D);
+  // make sure OpenGL was happy
+  ngl::NGLCheckGLError("DXTTexture creation",__LINE__);
+  // done with the data now so delete
+  delete [] data;
+  return true;
 }
 
-void DXTTexture::save(const std::string &_name)
-{
 
-}
