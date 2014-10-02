@@ -11,7 +11,7 @@ It requires linking to [SDL2](https://www.libsdl.org/download-2.0.php) [SDL2_ima
 
 Minimal error checking is done so it may not always work.
 
-[DXTViewer](https://github.com/NCCA/TextureCompressor/tree/master/DXTViewer) is a simple tool to load in the compressed files and view them
+[DXTViewer](https://github.com/NCCA/TextureCompressor/tree/master/DXTViewer) is a simple tool to load in the compressed files and view them. You can specify the name of the file on the command line or use the file open dialog presented at startup. Use o to reload a file.
 
 ##Todo
 - Write a file format to compress multiple textures into one packed file
