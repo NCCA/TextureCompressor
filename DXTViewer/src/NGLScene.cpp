@@ -1,10 +1,10 @@
+#include <QFileDialog>
 #include <QMouseEvent>
 #include <QGuiApplication>
 #include <iostream>
 #include "NGLScene.h"
 #include <ngl/NGLInit.h>
 #include <ngl/ShaderLib.h>
-#include <QFileDialog>
 
 
 NGLScene::NGLScene(const std::string &_fname, QWindow *_parent) : OpenGLWindow(_parent)
