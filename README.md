@@ -12,8 +12,8 @@ Minimal error checking is done so it may not always work.
 [DXTViewer](https://github.com/NCCA/TextureCompressor/tree/master/DXTViewer) is a simple tool to load in the compressed files and view them
 
 ##Todo
--Write a file format to compress multiple textures into one packed file
+- Write a file format to compress multiple textures into one packed file
 
--Write a demo to show the compress textures in action
+- Write a demo to show the compress textures in action
 
--Use it in the sponza demos
+- Use it in the sponza demos
