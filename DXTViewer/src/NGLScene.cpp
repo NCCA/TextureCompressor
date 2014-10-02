@@ -9,10 +9,9 @@
 
 NGLScene::NGLScene(const std::string &_fname, QWindow *_parent) : OpenGLWindow(_parent)
 {
-  // re-size the widget to that of the parent (in this case the GLFrame passed in on construction)
-  setTitle("DXT Texture Viewer");
   // store filename for loading
   m_filename=_fname;
+  setTitle(QString("DXT Viewer use o to load new file current %1").arg( m_filename.c_str()));
 }
 
 
@@ -42,6 +41,8 @@ void NGLScene::initialize()
   // we must call this first before any other GL commands to load and link the
   // gl commands from the lib, if this is not done program will crash
   ngl::NGLInit::instance();
+  // create a simple screen quad for drawing
+  m_screenQuad = new ScreenQuad("Texture");
 
   // enable depth testing for drawing
   glEnable(GL_DEPTH_TEST);
@@ -94,8 +95,6 @@ void NGLScene::initialize()
    // resize window to screen size
   setWidth(m_texture.width());
   setHeight(m_texture.height());
-  // create a simple screen quad for drawing
-  m_screenQuad = new ScreenQuad("Texture");
 }
 
 
@@ -121,6 +120,8 @@ void NGLScene::reload()
 				{
 					m_texture.reset();
 					m_texture.load(filename.toStdString());
+					m_filename=filename.toStdString();
+					setTitle(QString("DXT Viewer use o to load new file current %1").arg( m_filename.c_str()));
 				}
 }
 
