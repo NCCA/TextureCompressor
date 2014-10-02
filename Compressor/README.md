@@ -4,7 +4,7 @@ A simple command line tool to create basic DxT1,3,5 textures to be used with glC
 This tool takes command line arguments to change the different compressions and will do all valid file files it finds.
 It requires linking to [SDL2](https://www.libsdl.org/download-2.0.php)[SDL2_image](https://www.libsdl.org/projects/SDL_image/) and the [squish](https://code.google.com/p/libsquish/) library.
 
-Minimal error checking is done so it may not always work.
+Minimal error checking is done so it may not always work especially with some image formats.
 
 ##File format
 If you want to write your own loader the file format is as follows and can be found in [this](https://github.com/NCCA/TextureCompressor/blob/master/DXTViewer/src/DXTTexture.cpp) file as well
