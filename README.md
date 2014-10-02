@@ -19,3 +19,6 @@ Minimal error checking is done so it may not always work.
 - Write a demo to show the compress textures in action
 
 - Use it in the sponza demos
+
+### Maths Test
+ $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}$$ formula, and this is an inline Level $$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}$$$ formula.
