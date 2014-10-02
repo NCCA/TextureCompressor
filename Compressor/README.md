@@ -7,6 +7,7 @@ It requires linking to [SDL2](https://www.libsdl.org/download-2.0.php)[SDL2_imag
 Minimal error checking is done so it may not always work.
 
 ##File format
+If you want to write your own loader the file format is as follows and can be found in [this](https://github.com/NCCA/TextureCompressor/blob/master/DXTViewer/src/DXTTexture.cpp) file as well
 ```c++
 // 10 bytes ngl::cmptx
 // sizeof(int) width
@@ -15,6 +16,7 @@ Minimal error checking is done so it may not always work.
 // sizeof(enum) compression enum for type
 // sizeof(int) size of data
 // raw compressed data unsigned char[size]
+enum COMPRESSION{DXT1,DXT3,DXT5};
 std::string name;
 int width;
 int height;
@@ -22,7 +24,7 @@ int height;
 // GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
 // GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
 GLenum internalFormat;
-COMPRESSION compression; // enum COMPRESSION{DXT1,DXT3,DXT5};
+COMPRESSION compression;
 int size;
 unsigned char data[size];
 ```
