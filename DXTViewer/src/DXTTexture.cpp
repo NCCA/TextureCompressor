@@ -38,8 +38,8 @@ bool DXTTexture::load(const std::string &_name)
   fileIn.read(reinterpret_cast<char *>(&m_width),sizeof( int));
   fileIn.read(reinterpret_cast<char *>(&m_height),sizeof( int));
   std::cout<<"W/H "<<m_width<<" "<<m_height<<"\n";
-  int internalFormat;
-  fileIn.read(reinterpret_cast<char *>(&internalFormat),sizeof(internalFormat));
+  GLenum internalFormat;
+  fileIn.read(reinterpret_cast<char *>(&internalFormat),sizeof(GLenum));
   COMPRESSION format;
   fileIn.read(reinterpret_cast<char *>(&format),sizeof(COMPRESSION));
   std::cout<<"iFormat "<<internalFormat<<" "<<format<<"\n";
@@ -61,12 +61,12 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
 glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
 glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-if(format == DXT1)
-  glCompressedTexImage2D(GL_TEXTURE_2D, 0,  GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, m_width, m_height, 0,  m_dataSize,&m_data[0]);
-else if(format == DXT3)
-glCompressedTexImage2D(GL_TEXTURE_2D, 0,  GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, m_width, m_height, 0,  m_dataSize,&m_data[0]);
-else if(format == DXT5)
-glCompressedTexImage2D(GL_TEXTURE_2D, 0,  GL_COMPRESSED_RGBA_S3TC_DXT5_EXT, m_width, m_height, 0,  m_dataSize,&m_data[0]);
+//if(format == DXT1)
+//  glCompressedTexImage2D(GL_TEXTURE_2D, 0,  GL_COMPRESSED_RGBA_S3TC_DXT1_EXT, m_width, m_height, 0,  m_dataSize,&m_data[0]);
+//else if(format == DXT3)
+//glCompressedTexImage2D(GL_TEXTURE_2D, 0,  GL_COMPRESSED_RGBA_S3TC_DXT3_EXT, m_width, m_height, 0,  m_dataSize,&m_data[0]);
+//else if(format == DXT5)
+glCompressedTexImage2D(GL_TEXTURE_2D, 0,  internalFormat, m_width, m_height, 0,  m_dataSize,&m_data[0]);
 
 
 glGenerateMipmap(GL_TEXTURE_2D);
