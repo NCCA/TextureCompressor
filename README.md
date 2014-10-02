@@ -13,5 +13,7 @@ Minimal error checking is done so it may not always work.
 
 ##Todo
 -Write a file format to compress multiple textures into one packed file
+
 -Write a demo to show the compress textures in action
+
 -Use it in the sponza demos
