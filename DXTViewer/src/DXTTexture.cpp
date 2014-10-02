@@ -2,7 +2,7 @@
 #include <ngl/Util.h>
 #include <fstream>
 #include <iostream>
-
+#include <cstring>
 DXTTexture::~DXTTexture()
 {
   reset();
