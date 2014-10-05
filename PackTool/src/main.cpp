@@ -10,10 +10,11 @@
 #include "pystring.h"
 #include <squish.h>
 
-void createCompressedTexture(SDL_Surface *_surface, std::string _output);
+void createCompressedTexture(std::ofstream &_file, SDL_Surface *_surface, std::string _output);
 // command line arguments h (help) c[1,2,3] compression values
 // e [name] extension v verbose
-const static char *ARGUMENTS="hc:e:v";
+// -o output name for packed texture
+const static char *ARGUMENTS="hc:e:vo:";
 // enum for different texture types
 enum COMPRESSION{DXT1,DXT3,DXT5};
 
@@ -26,6 +27,8 @@ std::string g_ext("cmp");
 int g_scomp=squish::kDxt1;
 // use verbose mode
 bool g_verbose=false;
+// default pack name
+std::string g_output="texture.pack";
 
 int main(int argc, char **argv)
 {
@@ -58,7 +61,9 @@ int main(int argc, char **argv)
         std::cout<<"Unknown argument "<<optopt<<std::endl;
         exit(EXIT_FAILURE);
       break;
-
+      case 'o' :
+       g_output=optarg;
+      break;
       case 'c' :
         if(optarg[0]=='1')
         {
@@ -93,6 +98,17 @@ int main(int argc, char **argv)
   // image data to load
   SDL_Surface *image;
 
+  std::ofstream fileOut;
+  fileOut.open(g_output.c_str(),std::ios::out | std::ios::binary);
+  const std::string header("ngl::packtexture");
+  fileOut.write(header.c_str(),header.length());
+  int numFiles=0;
+  // need to store this position for later so we can write out
+  // the actual number of files packed.
+  int numFileLocation=fileOut.tellp();
+  // now write out dummy size;
+  fileOut.write(reinterpret_cast<char *>(numFiles),sizeof(int));
+
   for(int file=optind; file<argc; ++file)
   {
     // load current file and see if it is ok
@@ -102,43 +118,37 @@ int main(int argc, char **argv)
       std::cerr<<"Problem loading "<<argv[file]<<" " <<IMG_GetError()<<"\n";
       continue;
     }
-    // now we split the file and extract the extension
-    // using pystring as it is easy and quick
-    std::vector <std::string> tokens;
-    // split the file into tokens based on the .
-    pystring::split(argv[file],tokens,".");
-    // make the last token the new extension
-    tokens[tokens.size()-1]=g_ext;
-    // create a new string joining the tokens with a .
-    std::string outputString = pystring::join(".", tokens);
-    if(g_verbose)
-    {
-      std::cout<<"saving to "<<outputString<<"\n";
-    }
     // now compress.
-    createCompressedTexture(image,outputString);
+    createCompressedTexture(fileOut,image,argv[file]);
     // and free the image
     SDL_free(image);
+    ++numFiles;
   }
+  fileOut.seekp(numFileLocation,std::ios_base::beg	);
+  fileOut.write(reinterpret_cast<char *>(numFiles),sizeof(int));
+
+  // close file
+  fileOut.close();
+
   // now tidy up and exit SDL
  SDL_Quit();
 }
 
 
 
-void createCompressedTexture(SDL_Surface *_surface, std::string _output)
+void createCompressedTexture( std::ofstream &_file, SDL_Surface *_surface, std::string _output)
 {
   // internal format used by OpenGL
   GLenum internalFormat;
-  if(g_comp==DXT1)
+  if(g_comp==squish::kDxt1)
   {
     internalFormat=GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
   }
-  else if(g_comp==DXT3)
+  else if(g_comp==squish::kDxt3)
   {
     internalFormat=GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
   }
-  else if(g_comp==DXT5)
+  else if(g_comp==squish::kDxt5)
   {
     internalFormat=GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
   }
@@ -161,27 +171,24 @@ void createCompressedTexture(SDL_Surface *_surface, std::string _output)
   {
     std::cout << "Completed compression" << std::endl;
   }
-  std::ofstream fileOut;
   // and write out
-  // 10 bytes ngl::cmptx
+  // length of file name string
+  // file name
   // sizeof(int) width
   // sizeof(int) height
   // sizeof(GLenum) internalformat
   // sizeof(enum) compression enum for type
   // sizeof(int) size of data
   // raw compressed data unsigned char[size]
-  fileOut.open(_output.c_str(),std::ios::out | std::ios::binary);
-  const std::string header("ngl::cmptx");
-  fileOut.write(header.c_str(),header.length());
-  fileOut.write(reinterpret_cast<char *>(&s->w),sizeof(s->w));
-  fileOut.write(reinterpret_cast<char *>(&s->h),sizeof(s->h));
-  fileOut.write(reinterpret_cast<char *>(&internalFormat),sizeof(internalFormat));
-  fileOut.write(reinterpret_cast<char *>(&g_comp),sizeof(COMPRESSION));
+  _file.write(reinterpret_cast<char *>(_output.length()),sizeof(int));
+  _file.write(_output.c_str(),_output.length());
+  _file.write(reinterpret_cast<char *>(&s->w),sizeof(s->w));
+  _file.write(reinterpret_cast<char *>(&s->h),sizeof(s->h));
+  _file.write(reinterpret_cast<char *>(&internalFormat),sizeof(internalFormat));
+  _file.write(reinterpret_cast<char *>(&g_comp),sizeof(COMPRESSION));
   // data size
-  fileOut.write(reinterpret_cast <char *>(&size),sizeof(int));
-  fileOut.write(reinterpret_cast<char *>(dxtData),size);
-  // close file
-  fileOut.close();
+  _file.write(reinterpret_cast <char *>(&size),sizeof(int));
+  _file.write(reinterpret_cast<char *>(dxtData),size);
 
 }
 
