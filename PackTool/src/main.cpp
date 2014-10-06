@@ -107,7 +107,7 @@ int main(int argc, char **argv)
   // the actual number of files packed.
   int numFileLocation=fileOut.tellp();
   // now write out dummy size;
-  fileOut.write(reinterpret_cast<char *>(numFiles),sizeof(int));
+  fileOut.write(reinterpret_cast<char *>(&numFiles),sizeof(int));
 
   for(int file=optind; file<argc; ++file)
   {
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
     ++numFiles;
   }
   fileOut.seekp(numFileLocation,std::ios_base::beg	);
-  fileOut.write(reinterpret_cast<char *>(numFiles),sizeof(int));
+  fileOut.write(reinterpret_cast<char *>(&numFiles),sizeof(int));
 
   // close file
   fileOut.close();
@@ -140,15 +140,15 @@ void createCompressedTexture( std::ofstream &_file, SDL_Surface *_surface, std::
 {
   // internal format used by OpenGL
   GLenum internalFormat;
-  if(g_comp==squish::kDxt1)
+  if(g_comp==DXT1)
   {
     internalFormat=GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
   }
-  else if(g_comp==squish::kDxt3)
+  else if(g_comp==DXT3)
   {
     internalFormat=GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
   }
-  else if(g_comp==squish::kDxt5)
+  else if(g_comp==DXT5)
   {
     internalFormat=GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
   }
@@ -180,7 +180,8 @@ void createCompressedTexture( std::ofstream &_file, SDL_Surface *_surface, std::
   // sizeof(enum) compression enum for type
   // sizeof(int) size of data
   // raw compressed data unsigned char[size]
-  _file.write(reinterpret_cast<char *>(_output.length()),sizeof(int));
+  int len=_output.length();
+  _file.write(reinterpret_cast<char *>(&len),sizeof(int));
   _file.write(_output.c_str(),_output.length());
   _file.write(reinterpret_cast<char *>(&s->w),sizeof(s->w));
   _file.write(reinterpret_cast<char *>(&s->h),sizeof(s->h));
