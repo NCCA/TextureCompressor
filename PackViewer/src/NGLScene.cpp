@@ -20,6 +20,7 @@ NGLScene::~NGLScene()
   ngl::NGLInit *Init = ngl::NGLInit::instance();
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
   Init->NGLQuit();
+  m_texturePack->instance()->clear();
   delete m_screenQuad;
 }
 
@@ -80,20 +81,24 @@ void NGLScene::initialize()
   // etc by using the pixel ratio as a multiplyer
   glViewport(0,0,width()*devicePixelRatio(),height()*devicePixelRatio());
   // load the texture
+  m_texturePack=m_texturePack->instance();
   if(m_filename=="")
   {
     reload();
   }
   else
   {
-    bool loaded=m_texturePack.load(m_filename);
-    m_currentTex=m_texturePack.begin();
+    bool loaded=m_texturePack->load(m_filename);
     if(!loaded)
     {
       reload();
+
     }
+
   }
-   // resize window to screen size
+  m_currentTex=m_texturePack->begin();
+
+  // resize window to 1K
   setWidth(1024);
   setHeight(1024);
 }
@@ -122,8 +127,24 @@ void NGLScene::reload()
 						tr("*.*") );
 				if( !filename.isNull() )
 				{
-					//m_texturePack.clear();
-					m_texturePack.append(filename.toStdString());
+					m_texturePack->clear();
+					m_texturePack->load(filename.toStdString());
+					m_filename=filename.toStdString();
+					setTitle(QString("DXT Viewer use o to load new file current %1").arg( m_filename.c_str()));
+				}
+}
+
+
+void NGLScene::append()
+{
+	QString filename = QFileDialog::getOpenFileName(
+						0,
+						tr("load texture"),
+						QDir::currentPath(),
+						tr("*.*") );
+				if( !filename.isNull() )
+				{
+					m_texturePack->append(filename.toStdString());
 					m_filename=filename.toStdString();
 					setTitle(QString("DXT Viewer use o to load new file current %1").arg( m_filename.c_str()));
 				}
@@ -171,14 +192,16 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_F : showFullScreen(); break;
   // show windowed
   case Qt::Key_N : showNormal(); break;
-  case Qt::Key_O : reload(); break;
+  case Qt::Key_O :  reload(); break;
+  case Qt::Key_A :  append(); break;
+
   case Qt::Key_Right :
-    if(m_currentTex != m_texturePack.end())
-      ++m_currentTex;
+    if(++m_currentTex == m_texturePack->end())
+      --m_currentTex;
   break;
 
   case Qt::Key_Left :
-    if(m_currentTex != m_texturePack.begin())
+    if(m_currentTex != m_texturePack->begin())
       --m_currentTex;
   break;
 

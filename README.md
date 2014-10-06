@@ -13,10 +13,11 @@ Minimal error checking is done so it may not always work.
 
 [DXTViewer](https://github.com/NCCA/TextureCompressor/tree/master/DXTViewer) is a simple tool to load in the compressed files and view them. You can specify the name of the file on the command line or use the file open dialog presented at startup. Use o to reload a file.
 
-##Todo
-- Write a file format to compress multiple textures into one packed file
+[Compressor](https://github.com/NCCA/TextureCompressor/tree/master/Compressor) is a tool to compress a series of texture files into one packed texture file. The command line options are similar to the TetureCompressor program but has the option to specify the output.
 
-- Write a demo to show the compress textures in action
+[PackTool](https://github.com/NCCA/TextureCompressor/tree/master/PackTool) is a tool to compress a series of texture files into one packed texture file. The command line options are similar to the TetureCompressor program but has the option to specify the output.
 
-- Use it in the sponza demos
+[PackViewer](https://github.com/NCCA/TextureCompressor/tree/master/PackViewer) is a tool to view the packed texture files and also contains the essential TexturePack class which may be used in your own projects to load in the packed textures.
+
+
 

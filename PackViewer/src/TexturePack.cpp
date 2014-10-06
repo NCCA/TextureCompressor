@@ -3,16 +3,17 @@
 #include <iostream>
 #include <ngl/Util.h>
 
-TexturePack::TexturePack(const std::string &_fname)
+TexturePack* TexturePack::s_instance=0;
+
+TexturePack *TexturePack::instance()
 {
-  m_numTextures=0;
-  load(_fname);
+  if(s_instance ==0)
+  {
+    s_instance= new TexturePack;
+  }
+  return s_instance;
 }
 
-TexturePack::~TexturePack()
-{
-
-}
 
 bool TexturePack::load(const std::string &_fname)
 {
@@ -90,7 +91,7 @@ bool TexturePack::load(const std::string &_fname)
 
 void TexturePack::append(const std::string &_name)
 {
-
+  load(_name);
 }
 
 void TexturePack::clear()
@@ -104,22 +105,40 @@ void TexturePack::clear()
   {
     GLuint id=(*it).second;
     glDeleteTextures(1,&id);
-
   }
 
 }
 
 GLuint TexturePack::getTexture(const std::string &_name)
 {
-
+  std::map <std::string, GLuint >::const_iterator tex=m_textures.find(_name);
+  // make sure we have a valid shader
+  if(tex!=m_textures.end())
+  {
+    return tex->second;
+  }
+  else
+    return 0;
 }
 
-void TexturePack::bind(const std::string &_fname)
+void TexturePack::bind(const std::string &_name)
 {
+  std::map <std::string, GLuint >::const_iterator tex=m_textures.find(_name);
+  // make sure we have a valid shader
+  if(tex!=m_textures.end())
+  {
+    glBindTexture(GL_TEXTURE_2D, tex->second);
+  }
+  else
+  {
+    glBindTexture(GL_TEXTURE_2D,0);
+
+  }
 
 }
 
 void TexturePack::unbind()
 {
+  glBindTexture(GL_TEXTURE_2D,0);
 
 }
