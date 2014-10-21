@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <ngl/Util.h>
+#include <cstring>
 
 TexturePack* TexturePack::s_instance=0;
 

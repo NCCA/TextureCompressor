@@ -3,6 +3,8 @@
 
 A series of demos to show how to create and then use [DXT](http://en.wikipedia.org/wiki/S3_Texture_Compression) compressed textures.
 
+Note these may not work on some linux drivers (nouveau / Mesa3D as compressed texture support doesn't seem to work)
+
 [Compressor](https://github.com/NCCA/TextureCompressor/tree/master/Compressor) Is a simple command line tool to create basic DxT1,3,5 textures to be used with [glCompressedTexImage2D](https://www.khronos.org/opengles/sdk/docs/man/xhtml/glCompressedTexImage2D.xml) formats.
 
 This tool takes command line arguments to change the different compressions and will attempt to convert and save all valid image files it is passed on the command line.
