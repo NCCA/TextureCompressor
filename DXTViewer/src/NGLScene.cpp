@@ -54,8 +54,8 @@ void NGLScene::initialize()
   // we are creating a shader called Texture
   shader->createShaderProgram("Texture");
   // now we are going to create empty shaders for Frag and Vert
-  shader->attachShader("TextureVertex",ngl::VERTEX);
-  shader->attachShader("TextureFragment",ngl::FRAGMENT);
+  shader->attachShader("TextureVertex",ngl::ShaderType::VERTEX);
+  shader->attachShader("TextureFragment",ngl::ShaderType::FRAGMENT);
   // attach the source
   shader->loadShaderSource("TextureVertex","shaders/TextureVertex.glsl");
   shader->loadShaderSource("TextureFragment","shaders/TextureFragment.glsl");
