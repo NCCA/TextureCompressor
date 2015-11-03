@@ -7,7 +7,7 @@
 #include <ngl/ShaderLib.h>
 
 
-NGLScene::NGLScene(const std::string &_fname, QWindow *_parent) : OpenGLWindow(_parent)
+NGLScene::NGLScene(const std::string &_fname)
 {
   // store filename for loading
   m_filename=_fname;
@@ -17,32 +17,31 @@ NGLScene::NGLScene(const std::string &_fname, QWindow *_parent) : OpenGLWindow(_
 
 NGLScene::~NGLScene()
 {
-  ngl::NGLInit *Init = ngl::NGLInit::instance();
   std::cout<<"Shutting down NGL, removing VAO's and Shaders\n";
-  Init->NGLQuit();
-  delete m_screenQuad;
 }
 
-void NGLScene::resizeEvent(QResizeEvent *_event )
+void NGLScene::resizeGL(int _w , int _h)
 {
-  if(isExposed())
-  {
-  // set the viewport for openGL we need to take into account retina display
-  // etc by using the pixel ratio as a multiplyer
-  glViewport(0,0,width()*devicePixelRatio(),height()*devicePixelRatio());
-  // now set the camera size values as the screen size has changed
-  renderLater();
-  }
+  m_width=_w*devicePixelRatio();
+  m_height=_h*devicePixelRatio();
+}
+
+void NGLScene::resizeGL(QResizeEvent *_event)
+{
+  int w=_event->size().width();
+  int h=_event->size().height();
+  m_width=w*devicePixelRatio();
+  m_height=h*devicePixelRatio();
 }
 
 
-void NGLScene::initialize()
+void NGLScene::initializeGL()
 {
   // we must call this first before any other GL commands to load and link the
   // gl commands from the lib, if this is not done program will crash
   ngl::NGLInit::instance();
   // create a simple screen quad for drawing
-  m_screenQuad = new ScreenQuad("Texture");
+  m_screenQuad.reset( new ScreenQuad("Texture"));
 
   // enable depth testing for drawing
   glEnable(GL_DEPTH_TEST);
@@ -100,10 +99,11 @@ void NGLScene::initialize()
 
 
 
-void NGLScene::render()
+void NGLScene::paintGL()
 {
   // clear the screen and depth buffer
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glViewport(0,0,m_width,m_height);
   // draw quad
   m_screenQuad->draw();
 
@@ -170,7 +170,7 @@ void NGLScene::keyPressEvent(QKeyEvent *_event)
   case Qt::Key_O : reload(); break;
   default : break;
   }
-  renderLater();
+  update();
 }
 
 

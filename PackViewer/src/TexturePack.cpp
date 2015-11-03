@@ -4,15 +4,11 @@
 #include <ngl/Util.h>
 #include <cstring>
 
-TexturePack* TexturePack::s_instance=0;
 
 TexturePack *TexturePack::instance()
 {
-  if(s_instance ==0)
-  {
-    s_instance= new TexturePack;
-  }
-  return s_instance;
+  static TexturePack s_instance;
+  return &s_instance;
 }
 
 

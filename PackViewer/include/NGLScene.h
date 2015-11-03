@@ -1,12 +1,16 @@
 #ifndef NGLSCENE_H__
 #define NGLSCENE_H__
-#include "OpenGLWindow.h"
 #include <ngl/Camera.h>
 #include <ngl/Colour.h>
 #include <ngl/Light.h>
 #include <ngl/Text.h>
+#include <map>
 #include "ScreenQuad.h"
 #include "TexturePack.h"
+#include <QOpenGLWindow.h>
+
+#include <memory>
+
 
 //----------------------------------------------------------------------------------------------------------------------
 /// @file NGLScene.h
@@ -21,14 +25,14 @@
 /// put in this file
 //----------------------------------------------------------------------------------------------------------------------
 
-class NGLScene : public OpenGLWindow
+class NGLScene : public QOpenGLWindow
 {
   public:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief ctor for our NGL drawing class
     /// @param [in] parent the parent window to the class
     //----------------------------------------------------------------------------------------------------------------------
-    NGLScene(const std::string &_fname,QWindow *_parent=0);
+    NGLScene(const std::string &_fname);
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief dtor must close down ngl and release OpenGL resources
     //----------------------------------------------------------------------------------------------------------------------
@@ -37,18 +41,21 @@ class NGLScene : public OpenGLWindow
     /// @brief the initialize class is called once when the window is created and we have a valid GL context
     /// use this to setup any default GL stuff
     //----------------------------------------------------------------------------------------------------------------------
-    void initialize();
+    void initializeGL();
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief this is called everytime we want to draw the scene
     //----------------------------------------------------------------------------------------------------------------------
-    void render();
-
-private:
+    void paintGL();
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Qt Event called when the window is re-sized
     /// @param [in] _event the Qt event to query for size etc
     //----------------------------------------------------------------------------------------------------------------------
-    void resizeEvent(QResizeEvent *_event);
+    // Qt 5.5.1 must have this implemented and uses it
+    void resizeGL(QResizeEvent *_event);
+    // Qt 5.x uses this instead! http://doc.qt.io/qt-5/qopenglwindow.html#resizeGL
+    void resizeGL(int _w, int _h);
+
+private:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief Qt Event called when a key is pressed
     /// @param [in] _event the Qt event to query for size etc
@@ -92,7 +99,7 @@ private:
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief full screen quad for rendering texture
     //----------------------------------------------------------------------------------------------------------------------
-    ScreenQuad *m_screenQuad;
+    std::unique_ptr<ScreenQuad> m_screenQuad;
     //----------------------------------------------------------------------------------------------------------------------
     /// @brief our packed texture (is a singleton class)
     //----------------------------------------------------------------------------------------------------------------------
@@ -101,7 +108,8 @@ private:
     // pointer to the current texture in the pack
     //----------------------------------------------------------------------------------------------------------------------
     std::map<std::string,GLuint>::const_iterator m_currentTex;
-
+    int m_width;
+    int m_height;
 
 };
 
