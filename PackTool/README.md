@@ -1,4 +1,4 @@
-#TextureCompressor
+# TextureCompressor
 
 A simple command line tool to create basic DxT1,3,5 textures to be used with glCompressedTexImage2D(https://www.khronos.org/opengles/sdk/docs/man/xhtml/glCompressedTexImage2D.xml) formats.
 This tool takes command line arguments to change the different compressions and will do all valid file files it finds.

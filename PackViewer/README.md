@@ -1,4 +1,4 @@
-#PackViewer
+# PackViewer
 ![alt tag](http://nccastaff.bournemouth.ac.uk/jmacey/GraphicsLib/Demos/TextureComp.png)
 
 This program reads the textures loaded into the .pack format created in the PackTool demo. Use the arrow keys to move between the different files
