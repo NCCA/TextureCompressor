@@ -3,7 +3,7 @@
 #include <ngl/Text.h>
 #include "DXTTexture.h"
 #include "ScreenQuad.h"
-#include <QOpenGLWindow.h>
+#include <QOpenGLWindow>
 #include <memory>
 //----------------------------------------------------------------------------------------------------------------------
 /// @file NGLScene.h

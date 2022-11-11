@@ -4,7 +4,7 @@
 #include <map>
 #include "ScreenQuad.h"
 #include "TexturePack.h"
-#include <QOpenGLWindow.h>
+#include <QOpenGLWindow>
 
 #include <memory>
 
