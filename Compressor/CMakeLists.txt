@@ -43,5 +43,5 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp)
 target_link_libraries(${TargetName} PRIVATE NGL)
 
 # Link in the SDL2 libraries
-target_link_libraries(${TargetName} PRIVATE SDL2::SDL2-static  SDL2::SDL2_image unofficial::libsquish::squish cxxopts::cxxopts)
+target_link_libraries(${TargetName} PRIVATE SDL2::SDL2  SDL2::SDL2_image unofficial::libsquish::squish cxxopts::cxxopts)
 
