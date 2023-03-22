@@ -25,7 +25,7 @@ find_package(NGL CONFIG REQUIRED)
 
 # Now include the SDL libraries, which need to be installed using vcpkg
 find_package(SDL2 CONFIG REQUIRED)
-find_package(sdl2-image CONFIG REQUIRED)
+find_package(sdl2_image CONFIG REQUIRED)
 find_package(unofficial-libsquish CONFIG REQUIRED)
 find_package(cxxopts CONFIG REQUIRED)
 # use C++ 17
@@ -43,5 +43,5 @@ target_sources(${TargetName} PRIVATE ${PROJECT_SOURCE_DIR}/src/main.cpp)
 target_link_libraries(${TargetName} PRIVATE NGL)
 
 # Link in the SDL2 libraries
-target_link_libraries(${TargetName} PRIVATE SDL2::SDL2 SDL2::SDL2_image unofficial::libsquish::squish cxxopts::cxxopts)
+target_link_libraries(${TargetName} PRIVATE SDL2::SDL2 $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static> unofficial::libsquish::squish cxxopts::cxxopts)
 
