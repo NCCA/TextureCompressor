@@ -25,7 +25,7 @@ find_package(NGL CONFIG REQUIRED)
 
 # Now include the SDL libraries, which need to be installed using vcpkg
 find_package(SDL2 CONFIG REQUIRED)
-find_package(sdl2_image CONFIG REQUIRED)
+find_package(SDL2_image CONFIG REQUIRED)
 find_package(unofficial-libsquish CONFIG REQUIRED)
 find_package(cxxopts CONFIG REQUIRED)
 # use C++ 17
